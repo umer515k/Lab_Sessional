@@ -1,0 +1,34 @@
+name: Microservices Application 
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.umer515k }}
+          password: ${{ secrets.Akimbo321# }}
+
+      - name: Build and Push Docker Images
+        run: |
+          SERVICES=(api-gateway order-services customer-services menu-services payment-services)
+          for SERVICE in "${SERVICES[@]}"
+          do
+            IMAGE_NAME="${{ secrets.umer515k }}/${SERVICE}:latest"
+            echo "Building $SERVICE..."
+            docker build -t $IMAGE_NAME ./$SERVICE
+            echo "Pushing $IMAGE_NAME to Docker Hub..."
+            docker push $IMAGE_NAME
+          done
